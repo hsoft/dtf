@@ -1,0 +1,7 @@
+syntax: glob
+
+env
+__pycache__
+
+syntax: regexp
+^static/.*$
