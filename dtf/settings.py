@@ -120,6 +120,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'dtfapp',
     'assnat',
+    'dgeq',
 )
 
 # A sample logging configuration. The only tangible logging
