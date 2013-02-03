@@ -1,6 +1,6 @@
 from django.db import models
 
-from dtfapp.models import Person
+from dtfapp.models import Person, PoliticalParty
 
 class LegislativeSession(models.Model):
     legislature = models.IntegerField()
@@ -15,12 +15,6 @@ class LegislativeSession(models.Model):
         return "Legislature: %d Session: %d" % (self.legislature, self.session)
 
 class ElectoralDivision(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-    
-    def __str__(self):
-        return self.name
-
-class PoliticalParty(models.Model):
     name = models.CharField(max_length=64, unique=True)
     
     def __str__(self):
