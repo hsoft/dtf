@@ -1,0 +1,16 @@
+DTF - Dans Ta Face
+==================
+
+This is a Django 1.5 project coded in Python 3. Therefore, to install it, you'll have to fetch
+Django's beta and install it manually. Then, it's as simple as:
+
+python manage.py syncdb
+python manage.py runserver
+
+For now, the website itself isn't very interesting. What's interesting is the scraping functionality
+that have been implemented. They're ran as django commands. For example, if you want 2012's
+contributions from DGEQ, do:
+
+python manage.py scrapedgeq 2012
+
+Have fun!
