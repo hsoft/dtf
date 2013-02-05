@@ -20,10 +20,19 @@ class Company(models.Model):
     def __str__(self):
         return self.name
     
-
 class PoliticalParty(models.Model):
-    name = models.CharField(max_length=64, unique=True)
-    acronym = models.CharField(max_length=8, unique=True)
+    name = models.CharField(max_length=100, unique=True)
+    acronym = models.CharField(max_length=10, unique=True)
     
     def __str__(self):
         return self.name
+
+class EmploymentRole(models.Model):
+    name = models.CharField(max_length=100)
+
+class Employment(models.Model):
+    employee = models.ForeignKey(Person)
+    employer = models.ForeignKey(Company)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    role = models.ForeignKey(EmploymentRole)

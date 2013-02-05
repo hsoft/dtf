@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 
 from dtfapp.models import Person, PoliticalParty
 
@@ -8,8 +9,17 @@ class Contributor(models.Model):
     # each contributor. We can use this ID for further queries.
     dgeqid = models.IntegerField(null=True)
     
+    class Meta:
+        unique_together = (
+            ('person', 'dgeqid'),
+        )
+    
     def __str__(self):
         return str(self.person)
+    
+    @classmethod
+    def contributors_by_total_amount(cls):
+        return cls.objects.annotate(total_amount=Sum('contribution__amount')).order_by('-total_amount')
 
 class Contribution(models.Model):
     contributor = models.ForeignKey(Contributor)

@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'dtfapp',
     'assnat',
     'dgeq',
+    'orders',
 )
 
 # A sample logging configuration. The only tangible logging
