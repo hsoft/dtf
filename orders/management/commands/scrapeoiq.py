@@ -41,7 +41,7 @@ def fetch_oiq_info(firstname, lastname):
         return None
     resultrow = find_name_in_result_table(firstname, lastname, resulttable)
     if resultrow is None:
-        print("Got a result table, but could find the correct name in the %d rows" % len(resulttable.tbody('tr')))
+        print("Got a result table, but could not find the correct name in the %d rows" % len(resulttable.tbody('tr')))
         return None
     detail_link = resultrow.td.a.attrs['href']
     qs = urlparse(detail_link).query
@@ -54,8 +54,6 @@ def fetch_oiq_info(firstname, lastname):
 class Command(BaseCommand):
     def handle(self, *args, **options):
         for index, contributor in enumerate(Contributor.contributors_by_total_amount()):
-            if index < 909:
-                continue
             print("Checking out [%d] %s (%d $)" % (index, contributor, contributor.total_amount))
             if contributor.person.oiqinfo_set.count() > 0:
                 print("Oh well, after all no because we already have info on that person.")
