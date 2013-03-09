@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.db import models
 from django.db.models import Sum
 
@@ -20,6 +22,12 @@ class Contributor(models.Model):
     @classmethod
     def contributors_by_total_amount(cls):
         return cls.objects.annotate(total_amount=Sum('contribution__amount')).order_by('-total_amount')
+
+    def contrib_by_party(self):
+        counter = defaultdict(int)
+        for c in self.contribution_set.all():
+            counter[c.party] += c.amount
+        return dict(counter)
 
 class Contribution(models.Model):
     contributor = models.ForeignKey(Contributor)

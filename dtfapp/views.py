@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response
 
+from dgeq.models import Contributor
 from .models import Person, Company
 
 MAIN_MENU = [
@@ -8,8 +9,13 @@ MAIN_MENU = [
 ]
 
 def people(request):
-    people = Person.objects.all()
-    return render_to_response('people.html', {'people': people, 'menu': MAIN_MENU,
+    contributors = Contributor.contributors_by_total_amount()[:100]
+    return render_to_response('people.html', {'contributors': contributors, 'menu': MAIN_MENU,
+        'active_menu': 'people'})
+
+def person_details(request, pk):
+    person = Person.objects.get(id=pk)
+    return render_to_response('person_details.html', {'person': person, 'menu': MAIN_MENU,
         'active_menu': 'people'})
 
 def companies(request):

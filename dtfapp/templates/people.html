@@ -3,13 +3,15 @@
 {% block contents %}
 <table class="table">
     <tr>
-        <th>First name</th>
-        <th>Last name</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Montant Total</th>
     </tr>
-    {% for person in people %}
+    {% for c in contributors %}
         <tr>
-            <td>{{ person.firstname }}</td>
-            <td>{{ person.lastname }}</td>
+            <td><a href="{{ c.person.get_absolute_url }}">{{ c.person.lastname }}</a></td>
+            <td>{{ c.person.firstname }}</td>
+            <td>{{ c.total_amount }}</td>
         </tr>
     {% endfor %}
 </table>

@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('dtfapp.views',
     url(r'^$', 'people', name='home'),
     url(r'^people/$', 'people', name='people'),
+    url(r'^people/(\d+)/$', 'person_details', name='person_details'),
     url(r'^companies/$', 'companies', name='companies'),
 )
 

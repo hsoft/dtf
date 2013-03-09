@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block contents %}
+<h1>{{ person.lastname }}, {{ person.firstname }}</h1>
+
+{% for contributor in person.contributor_set.all %}
+<h2>Contributor {{ contributor.dgeqid }}</h2>
+<table class="table">
+    <tr>
+        <th>Parti</th>
+        <th>Montant</th>
+    </tr>
+    {% for party, amount in contributor.contrib_by_party.items %}
+        <tr>
+            <td>{{ party }}</td>
+            <td>{{ amount }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endfor %}
+{% endblock %}
