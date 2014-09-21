@@ -37,6 +37,10 @@ class Contribution(models.Model):
     # we have the information, why not keep it?
     count = models.IntegerField(default=1)
     amount = models.IntegerField(default=0)
+    # we track city/postal code info at the Contribution level rather than Contributor because
+    # this information can change from year to year.
+    city = models.CharField(max_length=100, blank=True, default='')
+    postal_code = models.CharField(max_length=7, blank=True, default='')
 
     class Meta:
         unique_together = (
