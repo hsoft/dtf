@@ -10,15 +10,15 @@ class Contributor(models.Model):
     # In DGEQ's contribution list, there's this "idrech" value which seems to be a unique id for
     # each contributor. We can use this ID for further queries.
     dgeqid = models.IntegerField(null=True)
-    
+
     class Meta:
         unique_together = (
             ('person', 'dgeqid'),
         )
-    
+
     def __str__(self):
         return str(self.person)
-    
+
     @classmethod
     def contributors_by_total_amount(cls):
         return cls.objects.annotate(total_amount=Sum('contribution__amount')).order_by('-total_amount')
@@ -37,12 +37,12 @@ class Contribution(models.Model):
     # we have the information, why not keep it?
     count = models.IntegerField(default=1)
     amount = models.IntegerField(default=0)
-    
+
     class Meta:
         unique_together = (
             ('contributor', 'party', 'year'),
         )
-    
+
     def __str__(self):
         return "[%s] %s --> %s (%s)" % (self.year, self.contributor.person, self.party.acronym, self.amount)
 
@@ -50,3 +50,7 @@ class Contribution(models.Model):
 class PartyInfo(models.Model):
     party = models.OneToOneField(PoliticalParty)
     dgeqid = models.CharField(max_length=16)
+
+    def __str__(self):
+        return self.party.name
+

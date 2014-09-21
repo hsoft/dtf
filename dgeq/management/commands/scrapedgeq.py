@@ -1,31 +1,30 @@
-from urllib.request import urlopen
-from urllib.parse import urlencode, urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs
 import time
 
 from django.core.management.base import BaseCommand
 from bs4 import BeautifulSoup
+import requests
 
 from dtfapp.models import Person, PoliticalParty
 from dgeq.models import Contributor, Contribution
 
-def fetch_soup(url):
-    with urlopen(url) as fp:
-        contents = fp.read()
-    return BeautifulSoup(contents)
-
 def fetch_contriblist_soup(year, page):
     url = 'http://www.electionsquebec.qc.ca/francais/provincial/financement-et-depenses-electorales/recherche-sur-les-donateurs.php'
+    # PLQ, PQ, CAQ, ADQ, ON, QS
+    parties = '00085|00083|00016|00065|00010|00049'
     data = [
-        ('a', str(year)),
-        # PLQ, PQ, CAQ, ADQ, ON, QS
-        ('p', '00085|00083|00016|00065|00010|00049'),
-        ('n', ''),
-        ('min', '1000'),
-        ('max', '3000'),
-        ('page', str(page)),
+        ('control_1[]', [str(year)]),
+        ('control_2[]', parties.split('|')),
+        ('control_5[]', '1|2|3|4'.split('|')),
+        ('nom', ''),
+        ('ckparti', 'on'),
+        ('somme_minimum', '50'),
+        ('somme_maximum', '3000'),
+        ('liste_tri', 'NOM_PRENOM_DONATEUR'),
+        ('action', 'resultat'),
     ]
-    url += '?' + urlencode(data)
-    return fetch_soup(url)
+    r = requests.post(url, params={'page': page}, data=data)
+    return BeautifulSoup(r.text)
 
 PARTY_NAME_REL = {
     'P.L.Q./Q.L.P.': 'PLQ',
@@ -50,7 +49,7 @@ def extract_contributions(soup):
             # We only have the name
             fullname = cells[0].get_text()
             contribid = None
-        lastname, firstname = fullname.split(', ', 1)
+        lastname, firstname = fullname.strip().split(', ', 1)
         amount = cells[1].get_text()
         # The amount looks like '3 000,00 $' and we remove the ',00 $' part.
         amount = int(amount.strip().replace('\xa0', '')[:-5])
@@ -66,23 +65,22 @@ def parse_contributions(year, page):
     for contribid, lastname, firstname, partyacronym, amount, count in extract_contributions(soup):
         print('Processing ', contribid, lastname, firstname, partyacronym, amount, count)
         person, created = Person.objects.get_or_create(firstname=firstname, lastname=lastname)
-        contributor, created = Contributor.objects.get_or_create(person=person)
-        if contribid:
-            contributor.dgeqid = int(contribid)
-            contributor.save()
+        contribid = int(contribid) if contribid else None
+        contributor, created = Contributor.objects.get_or_create(dgeqid=contribid, person=person)
         party = PoliticalParty.objects.get(acronym=partyacronym)
-        contribution, created = Contribution.objects.get_or_create(contributor=contributor,
-            party=party, year=year)
+        contribution, created = Contribution.objects.get_or_create(
+            contributor=contributor, party=party, year=year
+        )
         contribution.count = count
         contribution.amount = amount
         contribution.save()
     return soup
-    
+
 
 class Command(BaseCommand):
     args = 'year <frompage>'
     help = 'Scrape contributions to party'
-    
+
     def handle(self, *args, **options):
         year = args[0]
         if len(args) == 2:
