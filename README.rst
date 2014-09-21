@@ -2,9 +2,10 @@
 DTF - Dans Ta Face
 ==================
 
-This is a Django 1.5 project coded in Python 3. Therefore, to install it, you'll have to fetch
-Django's beta and install it manually. Then, it's as simple as::
+This is a Django 1.5 project coded in Python 3. To run the app, you can do::
 
+    ./bootstrap.sh
+    . env/bin/activate
     python manage.py syncdb
     python manage.py runserver
 
