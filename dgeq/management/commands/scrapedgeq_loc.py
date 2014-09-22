@@ -1,4 +1,3 @@
-from urllib.parse import urlparse, parse_qs
 import time
 
 from django.core.management.base import BaseCommand
@@ -24,6 +23,8 @@ def extract_loc(soup):
     paras = div('p')
     city = paras[1].get_text().split(':')[1].strip()
     postal_code = paras[2].get_text().split(':')[1].strip()
+    if not postal_code:
+        postal_code = '---'
     return city, postal_code
 
 def parse_loc(contrib):
