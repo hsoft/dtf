@@ -1,16 +1,17 @@
 from django.db import models
 
-from dtfapp.models import Person
+from dtfapp.models import Person, Employment
 
 class OIQQuery(models.Model):
     date = models.DateField(db_index=True)
     person = models.ForeignKey(Person)
-    
+
     def __str__(self):
         return "%s (%s)" % (self.person, self.date)
 
 class OIQResult(models.Model):
     query = models.ForeignKey(OIQQuery)
+    employment = models.ForeignKey(Employment, null=True, on_delete=models.SET_NULL)
     contactid = models.CharField(max_length=100, unique=True)
     firstname = models.CharField(max_length=100, db_index=True)
     lastname = models.CharField(max_length=100, db_index=True)
@@ -23,6 +24,6 @@ class OIQResult(models.Model):
     graduation = models.CharField(max_length=20)
     university = models.CharField(max_length=100)
     speciality = models.CharField(max_length=100)
-    
+
     def __str__(self):
         return "%s, %s [%s]" % (self.lastname, self.firstname, self.employer)

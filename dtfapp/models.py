@@ -9,16 +9,16 @@ from django.core.urlresolvers import reverse
 class Person(models.Model):
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)
-    
+
     class Meta:
         unique_together = (('lastname', 'firstname'),)
-    
+
     def __str__(self):
         return "{}, {}".format(self.lastname, self.firstname)
-    
+
     def get_absolute_url(self):
         return reverse('person_details', args=[str(self.id)])
-    
+
     def normalized_name(self):
         # Removes all accents and then lowercase the thing, then returns
         # "lastname, firstname"
@@ -37,23 +37,25 @@ class Person(models.Model):
 
 class Company(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    
+
     def __str__(self):
         return self.name
-    
+
 class PoliticalParty(models.Model):
     name = models.CharField(max_length=100, unique=True)
     acronym = models.CharField(max_length=10, unique=True)
-    
+
     def __str__(self):
         return self.name
 
 class EmploymentRole(models.Model):
+    code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=100)
 
 class Employment(models.Model):
     employee = models.ForeignKey(Person)
     employer = models.ForeignKey(Company)
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
+    # The date at which our source data was queried. We used to have start/end dates in this model
+    # but since we didn't have a dataset giving us this information yet, I scrapped them.
+    query_date = models.DateField(null=True, blank=True)
     role = models.ForeignKey(EmploymentRole)

@@ -3,8 +3,42 @@
 {% block contents %}
 <h1>{{ person.lastname }}, {{ person.firstname }}</h1>
 
+<div>
+<p class="bg-warning">
+<strong>Attention!</strong> L'identité de la personne à laquelle on fait référence ici n'est pas certaine. On peut
+possiblement avoir affaire à plusieurs personnes en même temps.
+</p>
+</div>
+
+<h2>Emplois en tant qu'ingénieur</h2>
+<dl>
+    <dt>Source:</dt>
+    <dd><a href="http://www.oiq.qc.ca/fr/Pages/BottinDesMembres.aspx">OIQ</a></dd>
+</dl>
+{% if person.employment_set.exists %}
+<table class="table">
+    <tr>
+        <th>Date de l'information</th>
+        <th>Employeur</th>
+    </tr>
+{% for employment in person.employment_set.all %}
+    <tr>
+        <td>{{ employment.query_date }}</td>
+        <td>{{ employment.employer.name }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% else %}
+Aucun
+{% endif %}
+
+<h2>Contributions aux partis politiques</h2>
+<dl>
+    <dt>Source:</dt>
+    <dd><a href="http://www.electionsquebec.qc.ca/">DGEQ</a></dd>
+</dl>
 {% for contributor in person.contributor_set.all %}
-<h2>Contributor {{ contributor.dgeqid }}</h2>
+<h3>ID DGEQ: {{ contributor.dgeqid }}</h3>
 <table class="table">
     <tr>
         <th>Parti</th>
@@ -14,6 +48,25 @@
         <tr>
             <td>{{ party }}</td>
             <td>{{ amount }}</td>
+        </tr>
+    {% endfor %}
+</table>
+<h3>Détails</h3>
+<table class="table">
+    <tr>
+        <th>Année</th>
+        <th>Parti</th>
+        <th>Municipalité</th>
+        <th>Code Postal</th>
+        <th>Montant</th>
+    </tr>
+    {% for contrib in contributor.contrib_details %}
+        <tr>
+            <td>{{ contrib.year }}</td>
+            <td>{{ contrib.party }}</td>
+            <td>{{ contrib.city }}</td>
+            <td>{{ contrib.postal_code }}</td>
+            <td>{{ contrib.amount }}</td>
         </tr>
     {% endfor %}
 </table>

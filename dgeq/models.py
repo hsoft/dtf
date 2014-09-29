@@ -29,6 +29,9 @@ class Contributor(models.Model):
             counter[c.party] += c.amount
         return dict(counter)
 
+    def contrib_details(self):
+        return self.contribution_set.order_by('year', 'party')
+
 class Contribution(models.Model):
     contributor = models.ForeignKey(Contributor)
     party = models.ForeignKey(PoliticalParty)
